@@ -1,7 +1,10 @@
 #BlueJ class context
 comment0.target=ColorLab
+comment0.text=\r\n\ Do\ stuff\ with\ a\ picture\r\n\ \r\n\ @author\ Zach\ H\r\n\ 23/23/133221\r\n
 comment1.params=args
 comment1.target=void\ main(java.lang.String[])
+comment10.params=picture
+comment10.target=Picture\ blueify(Picture)
 comment2.params=picture\ factor
 comment2.target=Picture\ adjustRed(Picture,\ double)
 comment3.params=picture\ factor
@@ -18,4 +21,4 @@ comment8.params=picture
 comment8.target=Picture\ darken(Picture)
 comment9.params=picture\ redAmount\ greenAmount\ blueAmount
 comment9.target=Picture\ changeColors(Picture,\ int,\ int,\ int)
-numComments=10
+numComments=11

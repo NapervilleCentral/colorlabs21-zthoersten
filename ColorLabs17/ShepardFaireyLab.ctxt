@@ -2,4 +2,10 @@
 comment0.target=ShepardFaireyLab
 comment1.params=args
 comment1.target=void\ main(java.lang.String[])
-numComments=2
+comment2.params=pA\ pB
+comment2.target=boolean\ comparePixels(Pixel,\ Pixel)
+comment3.params=pixels
+comment3.target=Pixel[]\ sortPixelList(Pixel[])
+comment4.params=picture
+comment4.target=Picture\ method1(Picture)
+numComments=5

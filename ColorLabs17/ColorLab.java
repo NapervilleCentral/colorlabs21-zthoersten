@@ -1,20 +1,19 @@
+/**
+ * Do stuff with a picture
+ * 
+ * @author Zach H
+ * 23/23/133221
+ */
+
 public class ColorLab {
     public static void main(String[] args) {
-        Picture pic = new Picture("images/moon-surface.jpg");
+        Picture pic = new Picture("images/heylookitsme.jpg");
         
         // initial picture
         pic.explore();
         
         // make modifications
-        pic = adjustRed(pic, 0.5);
-        pic = adjustGreen(pic, 1.5);
-        pic = adjustBlue(pic, 0.25);
-        
-        pic = negate(pic);
-        pic = grayscale(pic);
-        
         pic = lighten(pic);
-        pic = darken(pic);
         
         // final modified picture
         pic.explore();
@@ -95,7 +94,7 @@ public class ColorLab {
             blue = pixel.getBlue();
             
             avg = (red + green + blue) / 3;
-            val = (int)Math.round(avg * 15/255); // scale down to 0-15
+            val = (int)Math.round(avg * 100/255); // scale down to 0-100
             
             pixel.setRed(red + val);
             pixel.setGreen(green + val);
@@ -113,7 +112,7 @@ public class ColorLab {
             blue = pixel.getBlue();
             
             avg = (red + green + blue) / 3;
-            val = (int)Math.round(avg * 15/255); // scale down to 0-15
+            val = (int)Math.round(avg * 100/255); // scale down to 0-100
             
             pixel.setRed(red - val);
             pixel.setGreen(green - val);
@@ -123,7 +122,34 @@ public class ColorLab {
     }
     
     public static Picture changeColors(Picture picture, int redAmount, int greenAmount, int blueAmount) {
-        // add amounts to current vals
+        int red, green, blue;
+        for (Pixel pixel : picture.getPixels()) {
+            red = pixel.getRed();
+            green = pixel.getGreen();
+            blue = pixel.getBlue();
+            
+            pixel.setRed(red + redAmount);
+            pixel.setGreen(green + greenAmount);
+            pixel.setBlue(blue + blueAmount);
+        }
+        return picture;
+    }
+    
+    public static Picture blueify(Picture picture) {
+        int red, green, blue;
+        for (Pixel pixel : picture.getPixels()) {
+            red = pixel.getRed();
+            green = pixel.getGreen();
+            blue = pixel.getBlue();
+            
+            if (160 <= red && red <= 220 &&
+                115 <= green && green <= 175 &&
+                115 <= blue && blue <= 175) {
+                pixel.setRed(red / 2);
+                pixel.setGreen(green / 2);
+                pixel.setBlue(blue * 2);
+            }
+        }
         return picture;
     }
 }
