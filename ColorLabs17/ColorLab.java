@@ -8,15 +8,29 @@
 public class ColorLab {
     public static void main(String[] args) {
         Picture pic = new Picture("images/heylookitsme.jpg");
-        
-        // initial picture
-        pic.explore();
+        Picture pic2 = new Picture("images/heylookitsme.jpg");
+        Picture pic3 = new Picture("images/heylookitsme.jpg");
+        Picture pic4 = new Picture("images/heylookitsme.jpg");
+        Picture pic5 = new Picture("images/heylookitsme.jpg");
+        Picture pic6 = new Picture("images/heylookitsme.jpg");
+        Picture pic7 = new Picture("images/heylookitsme.jpg");
         
         // make modifications
-        pic = lighten(pic);
+        pic2 = adjustRed(pic2, 0.75);
+        pic3 = negate(pic3);
+        pic4 = grayscale(pic4);
+        pic5 = lighten(pic5);
+        pic6 = changeColors(pic6, 190, 0, 0);
+        pic7 = blueify(pic7);
         
         // final modified picture
         pic.explore();
+        pic2.explore();
+        pic3.explore();
+        pic4.explore();
+        pic5.explore();
+        pic6.explore();
+        pic7.explore();
     }
     
     public static Picture adjustRed(Picture picture, double factor) {
