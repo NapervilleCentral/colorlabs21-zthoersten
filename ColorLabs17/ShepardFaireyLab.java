@@ -1,8 +1,8 @@
 /**
- * Write a description of class SheparFaireyLab here.
+ * Modify a picture by replacing the colors with 4
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * @author Zach H
+ * 11/13/2025
  */
 
 import java.awt.*;
@@ -37,62 +37,66 @@ public class ShepardFaireyLab {
         // custom colors
     }
     
-    public static Pixel[] bubblesort(Pixel[] pixels) {
-        int n = pixels.length;
-        boolean swapped = false;
+    public static float[] pixelStrengths(Pixel[] pixels) {
+        float[] strengths = new float[pixels.length];
         
-        while (!swapped) {
-            swapped = false;
-            for (int i = 1; i <= n - 1; i++) {
-                if (comparePixels(pixels[i], pixels[i - 1])) {
-                    Pixel temp = pixels[i];
-                    pixels[i] = pixels[i - 1];
-                    pixels[i - 1] = temp;
-                    swapped = true;
-                }
-            }
-            n--;
+        for (int i = 0; i < pixels.length; i++) {
+            strengths[i] = (float)pixels[i].getAverage() / 3.0f;
         }
         
-        return pixels;
-    }
-    
-    public static boolean comparePixels(Pixel pA, Pixel pB) {
-        float valA = (pA.getRed() + pA.getGreen() + pA.getBlue()) / 3;
-        float valB = (pB.getRed() + pB.getGreen() + pB.getBlue()) / 3;
-        return valA > valB;
+        return strengths;
     }
     
     public static Picture method1(Picture picture) {
-        Pixel[] pixels = picture.getPixels();
-        List<Float> pixelStrengths = new ArrayList<>();
+        Pixel[] pixels = picture.getPixels(); // create array of pixels from picture
+        float[] strengths = pixelStrengths(pixels); // calculate the strength of each pixel (average of each color channel)
+        Arrays.sort(strengths); // sort the strengths
         
-        for (Pixel pixel : pixels) {
-            float strength = (pixel.getRed() + pixel.getGreen() + pixel.getBlue()) / 3.0f;
-            pixelStrengths.add(strength);
-        }
+        int groupSize = strengths.length / 4; // split into 4 groups
+        int bound1 = groupSize * 1 - 1;
+        int bound2 = groupSize * 2 - 1;
+        int bound3 = groupSize * 3 - 1;
+        int bound4 = groupSize * 4 - 1;
+        List group1 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 0, groupSize * 1 - 1));
+        List group2 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 1, groupSize * 2 - 1));
+        List group3 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 2, groupSize * 3 - 1));
+        List group4 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 3, groupSize * 4 - 1));
         
-        pixelStrengths.sort(Comparator());
-        // figure out what the hell a comparator is
-        int groupSize = sorted.length / 4;
-        
-        List group1 = Arrays.asList(Arrays.copyOfRange(sorted, 0, groupSize));
-        List group2 = Arrays.asList(Arrays.copyOfRange(sorted, groupSize + 1, groupSize * 2));
-        List group3 = Arrays.asList(Arrays.copyOfRange(sorted, groupSize * 2 + 1, groupSize * 3));
-        List group4 = Arrays.asList(Arrays.copyOfRange(sorted, groupSize * 3 + 1, sorted.length));
-        
-        for (Pixel pixel : pixels) {
-            if (group1.contains(pixel)) {
+        Pixel pixel;
+        float strength;
+        int idx;
+        for (int i = 0; i < pixels.length; i++) {
+            pixel = pixels[i]; // get the current pixel
+            strength = (float)pixel.getAverage() / 3.0f; // calculate this pixel's strength
+            idx = Arrays.asList(strengths).indexOf(strength);
+            if (idx <= bound1) {
                 pixel.setColor(color1); // change all pixels in group 1 to dark blue
-            } else if (group2.contains(pixel)) {
+            } else if (idx <= bound2) {
                 pixel.setColor(color2); // change all pixels in group 2 to red
-            } else if (group3.contains(pixel)) {
+            } else if (idx <= bound3) {
                 pixel.setColor(color3); // change all pixels in group 3 to light blue
-            } else if (group4.contains(pixel)) {
+            } else if (idx <= bound4) {
                 pixel.setColor(color4); // change all pixels in group 4 to off-white
+            } else {
+                pixel.setColor(new Color(255, 0, 0)); // set any other pixels to red
             }
         }
         
         return picture;
+    }
+}
+
+class SortPixels implements Comparator {
+    public int compare(Object pixel1, Object pixel2) {
+        double val1 = ((Pixel)pixel1).getAverage() / 3.0;
+        double val2 = ((Pixel)pixel2).getAverage() / 3.0;
+        
+        if (val1 > val2) {
+            return 1;
+        } else if (val1 < val2) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }
