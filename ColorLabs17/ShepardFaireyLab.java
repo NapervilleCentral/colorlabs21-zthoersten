@@ -1,5 +1,5 @@
 /**
- * Modify a picture by replacing the colors with 4
+ * Modify a picture by replacing all colors with only four
  * 
  * @author Zach H
  * 11/13/2025
@@ -16,51 +16,40 @@ public class ShepardFaireyLab {
     static Color color4 = new Color(249, 228, 170); // off-white
     
     public static void main(String[] args) {
-        // opens selfie picture
-        // String fileName = FileChooser.pickAFile();
-        // Picture pictObj = new Picture(fileName);
-        // pictObj.explore();
-        
-        //change with selfie picture
         Picture me = new Picture("images/heylookitsme.jpg");
-        
         me.explore();
         
-        // method 1
+        // call one of the methods below
         
-        Picture me1 = method1(me);
+        // Picture modified = method1(me);
+        // Picture modified = method2(me);
+        // Picture modified = method3(me);
+        // Picture modified = method3_gray(me);
+        // Picture modified = method3_grayInvert(me);
         
-        me1.explore();
-        
-        // method 2
-        
-        // custom colors
+        // modified.explore(); modified.write("sf_default.jpg");
     }
     
     public static float[] pixelStrengths(Pixel[] pixels) {
-        float[] strengths = new float[pixels.length];
+        float[] strengths = new float[pixels.length]; // create new array with appropriate length
         
         for (int i = 0; i < pixels.length; i++) {
-            strengths[i] = (float)pixels[i].getAverage() / 3.0f;
+            strengths[i] = (float)pixels[i].getAverage() / 3.0f; // fill the array with the average of the channels
         }
+        Arrays.sort(strengths); // sort the array in ascending order (smallest to largest)
         
-        return strengths;
+        return strengths; // return array for further use
     }
     
     public static Picture method1(Picture picture) {
         Pixel[] pixels = picture.getPixels(); // create array of pixels from picture
         float[] strengths = pixelStrengths(pixels); // calculate the strength of each pixel (average of each color channel)
-        Arrays.sort(strengths); // sort the strengths
         
         int groupSize = strengths.length / 4; // split into 4 groups
-        int bound1 = groupSize * 1 - 1;
-        int bound2 = groupSize * 2 - 1;
-        int bound3 = groupSize * 3 - 1;
-        int bound4 = groupSize * 4 - 1;
-        List group1 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 0, groupSize * 1 - 1));
-        List group2 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 1, groupSize * 2 - 1));
-        List group3 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 2, groupSize * 3 - 1));
-        List group4 = Arrays.asList(Arrays.copyOfRange(strengths, groupSize * 3, groupSize * 4 - 1));
+        float bound1 = strengths[groupSize * 1 - 1];
+        float bound2 = strengths[groupSize * 2 - 1];
+        float bound3 = strengths[groupSize * 3 - 1];
+        float bound4 = strengths[groupSize * 4 - 1];
         
         Pixel pixel;
         float strength;
@@ -68,14 +57,13 @@ public class ShepardFaireyLab {
         for (int i = 0; i < pixels.length; i++) {
             pixel = pixels[i]; // get the current pixel
             strength = (float)pixel.getAverage() / 3.0f; // calculate this pixel's strength
-            idx = Arrays.asList(strengths).indexOf(strength);
-            if (idx <= bound1) {
+            if (strength <= bound1) {
                 pixel.setColor(color1); // change all pixels in group 1 to dark blue
-            } else if (idx <= bound2) {
+            } else if (strength <= bound2) {
                 pixel.setColor(color2); // change all pixels in group 2 to red
-            } else if (idx <= bound3) {
+            } else if (strength <= bound3) {
                 pixel.setColor(color3); // change all pixels in group 3 to light blue
-            } else if (idx <= bound4) {
+            } else if (strength <= bound4) {
                 pixel.setColor(color4); // change all pixels in group 4 to off-white
             } else {
                 pixel.setColor(new Color(255, 0, 0)); // set any other pixels to red
@@ -84,19 +72,143 @@ public class ShepardFaireyLab {
         
         return picture;
     }
-}
-
-class SortPixels implements Comparator {
-    public int compare(Object pixel1, Object pixel2) {
-        double val1 = ((Pixel)pixel1).getAverage() / 3.0;
-        double val2 = ((Pixel)pixel2).getAverage() / 3.0;
+    
+    public static Picture method2(Picture picture) {
+        Pixel[] pixels = picture.getPixels(); // create array of pixels from picture
+        float[] strengths = pixelStrengths(pixels); // calculate the strength of each pixel (average of each color channel)
         
-        if (val1 > val2) {
-            return 1;
-        } else if (val1 < val2) {
-            return -1;
-        } else {
-            return 0;
+        // Arrays.sort works in ascending order (i.e. smallest to largest)
+        float minStrength = strengths[0];
+        float maxStrength = strengths[strengths.length - 1];
+        float intervalSize = (maxStrength - minStrength) / 4;
+        
+        Pixel pixel;
+        float strength;
+        int idx;
+        for (int i = 0; i < pixels.length; i++) {
+            pixel = pixels[i]; // get the current pixel
+            strength = (float)pixel.getAverage() / 3.0f; // calculate this pixel's strength
+            if (strength < minStrength + intervalSize * 1) {
+                pixel.setColor(color1); // change all pixels in group 1 to dark blue
+            } else if (strength < minStrength + intervalSize * 2) {
+                pixel.setColor(color2); // change all pixels in group 2 to red
+            } else if (strength < minStrength + intervalSize * 3) {
+                pixel.setColor(color3); // change all pixels in group 3 to light blue
+            } else if (strength < minStrength + intervalSize * 4) {
+                pixel.setColor(color4); // change all pixels in group 4 to off-white
+            } else {
+                pixel.setColor(new Color(255, 0, 0)); // set any other pixels to red
+            }
         }
+        
+        return picture;
+    }
+    
+    public static Picture method3(Picture picture) {
+        Pixel[] pixels = picture.getPixels(); // create array of pixels from picture
+        float[] strengths = pixelStrengths(pixels); // calculate the strength of each pixel (average of each color channel)
+        
+        // Arrays.sort works in ascending order (i.e. smallest to largest)
+        float minStrength = strengths[0];
+        float maxStrength = strengths[strengths.length - 1];
+        float intervalSize = (maxStrength - minStrength) / 4;
+        
+        Color color1 = new Color(255, 74, 74); // red
+        Color color2 = new Color(255, 158, 74); // orange
+        Color color3 = new Color(63, 217, 63); // green
+        Color color4 = new Color(53, 173, 179); // light blue
+        
+        Pixel pixel;
+        float strength;
+        int idx;
+        for (int i = 0; i < pixels.length; i++) {
+            pixel = pixels[i]; // get the current pixel
+            strength = (float)pixel.getAverage() / 3.0f; // calculate this pixel's strength
+            if (strength < minStrength + intervalSize * 1) {
+                pixel.setColor(color1); // change all pixels in group 1 to red
+            } else if (strength < minStrength + intervalSize * 2) {
+                pixel.setColor(color2); // change all pixels in group 2 to orange
+            } else if (strength < minStrength + intervalSize * 3) {
+                pixel.setColor(color3); // change all pixels in group 3 to green
+            } else if (strength < minStrength + intervalSize * 4) {
+                pixel.setColor(color4); // change all pixels in group 4 to light blue
+            } else {
+                pixel.setColor(color4); // set any other pixels to group 4's color
+            }
+        }
+        
+        return picture;
+    }
+    
+    public static Picture method3_gray(Picture picture) {
+        Pixel[] pixels = picture.getPixels(); // create array of pixels from picture
+        float[] strengths = pixelStrengths(pixels); // calculate the strength of each pixel (average of each color channel)
+        
+        // Arrays.sort works in ascending order (i.e. smallest to largest)
+        float minStrength = strengths[0];
+        float maxStrength = strengths[strengths.length - 1];
+        float intervalSize = (maxStrength - minStrength) / 4;
+        
+        Color color1 = new Color(0, 0, 0); // black
+        Color color2 = new Color(85, 85, 85); // dark gray
+        Color color3 = new Color(170, 170, 170); // light gray
+        Color color4 = new Color(255, 255, 255); // white
+        
+        Pixel pixel;
+        float strength;
+        int idx;
+        for (int i = 0; i < pixels.length; i++) {
+            pixel = pixels[i]; // get the current pixel
+            strength = (float)pixel.getAverage() / 3.0f; // calculate this pixel's strength
+            if (strength < minStrength + intervalSize * 1) {
+                pixel.setColor(color1); // change all pixels in group 1 to black
+            } else if (strength < minStrength + intervalSize * 2) {
+                pixel.setColor(color2); // change all pixels in group 2 to dark gray
+            } else if (strength < minStrength + intervalSize * 3) {
+                pixel.setColor(color3); // change all pixels in group 3 to light gray
+            } else if (strength < minStrength + intervalSize * 4) {
+                pixel.setColor(color4); // change all pixels in group 4 to white
+            } else {
+                pixel.setColor(color4); // set any other pixels to group 4's color
+            }
+        }
+        
+        return picture;
+    }
+    
+    public static Picture method3_grayInvert(Picture picture) {
+        Pixel[] pixels = picture.getPixels(); // create array of pixels from picture
+        float[] strengths = pixelStrengths(pixels); // calculate the strength of each pixel (average of each color channel)
+        
+        // Arrays.sort works in ascending order (i.e. smallest to largest)
+        float minStrength = strengths[0];
+        float maxStrength = strengths[strengths.length - 1];
+        float intervalSize = (maxStrength - minStrength) / 4;
+        
+        Color color1 = new Color(255, 255, 255); // white
+        Color color2 = new Color(170, 170, 170); // light gray
+        Color color3 = new Color(85, 85, 85); // dark gray
+        Color color4 = new Color(0, 0, 0); // black
+        
+        Pixel pixel;
+        float strength;
+        int idx;
+        for (int i = 0; i < pixels.length; i++) {
+            pixel = pixels[i]; // get the current pixel
+            strength = (float)pixel.getAverage() / 3.0f; // calculate this pixel's strength
+            if (strength < minStrength + intervalSize * 1) {
+                pixel.setColor(color1); // change all pixels in group 1 to white
+            } else if (strength < minStrength + intervalSize * 2) {
+                pixel.setColor(color2); // change all pixels in group 2 to light gray
+            } else if (strength < minStrength + intervalSize * 3) {
+                pixel.setColor(color3); // change all pixels in group 3 to dark gray
+            } else if (strength < minStrength + intervalSize * 4) {
+                pixel.setColor(color4); // change all pixels in group 4 to black
+            } else {
+                pixel.setColor(color4); // set any other pixels to group 4's color
+            }
+        }
+        
+        return picture;
     }
 }
